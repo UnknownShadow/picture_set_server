@@ -1,0 +1,64 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+	    http://www.springframework.org/schema/task
+	    http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache-4.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 负责调用controller层,扫描当前路径中的类,发现在类中使用@Controller注解,类似继承HttpServlet/ActionSupport,可添加多个controller
+    <context:component-scan/> 扫描指定的包中的类上的注解
+    注意：此时的包是基础包路径 package com.li.emp.controller;
+    -->
+    <context:component-scan base-package="com.server.config"/>
+    <context:component-scan base-package="com.server.controller"/>
+    <context:component-scan base-package="com.server.dao"/>
+    <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true"/>
+    <mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/"/>
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+    <mvc:resources mapping="/assets/**" location="/assets/"/>
+    <mvc:resources mapping="/**" location="/"/>
+
+
+    <!-- AOP 注解方式 ；定义Aspect -->
+    <!-- 激活组件扫描功能,在包"com.example.aop及其子包下面自动扫描通过注解配置的组件-->
+    <context:component-scan base-package="com.server.aop"/>
+    <!-- 启动AspectJ支持   只对扫描过的bean有效-->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+
+    <!--开启这个配置，spring才能识别@Scheduled注解   -->
+    <context:component-scan base-package="com.server.task"/>
+    <task:executor id="executor" pool-size="5"/>
+    <task:scheduler id="scheduler" pool-size="10"/>
+    <task:annotation-driven executor="executor" scheduler="scheduler"/>
+
+    <!--SpringMVC上传文件的配置，，必须配置，-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="maxUploadSize" value="54000000"></property>
+    </bean>
+    <!--jsp页面视图配置-->
+    <bean
+            class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 前缀,确定当前访问的页面路径地址 -->
+        <property name="prefix">
+            <value>/WEB-INF/jsp/</value>
+        </property>
+        <!-- 后缀,确定要访问的文件类型 -->
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+</beans>
+
+
+
