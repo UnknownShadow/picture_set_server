@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 
-@Api(value = "商城小程序接口中心", description = "商城小程序接口中心")
+@Api(value = "美图吧小程序接口中心", description = "美图吧小程序接口中心")
 @RestController
 @RequestMapping("store/api/")
 public class StoreController extends BaseController {
