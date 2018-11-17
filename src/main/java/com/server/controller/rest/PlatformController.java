@@ -2,6 +2,9 @@ package com.server.controller.rest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.server.controller.BaseController;
+import com.server.dao.CategoryDao;
+import com.server.dao.PicturesDao;
+import com.server.entity.CategoryEntity;
 import com.server.entity.api.Ajax;
 import com.server.service.qcloud.CosService;
 import com.server.utils.PublicHandleUtils;
@@ -24,6 +27,11 @@ public class PlatformController extends BaseController {
 
     @Autowired
     CosService cosService;
+
+    @Autowired
+    CategoryDao categoryDao;
+    @Autowired
+    PicturesDao picturesDao;
 
 
     //腾讯云cos所需参数
@@ -127,29 +135,49 @@ public class PlatformController extends BaseController {
      * 图片新增
      *
      * @param id     商品ID
-     * @param file   上传的文件
+     * @param file   上传的首页显示图片文件
      * @param status 用于区分文件上传到哪个cosPath
+     * @param pictures 图片集合
      */
-    @ApiOperation(value = "文件上传", notes = "文件上传",
+    @ApiOperation(value = "图片集合入库", notes = "图片集合入库",
             httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
             response = Ajax.class)
     @ResponseBody
-    @RequestMapping(value = "up", method = RequestMethod.POST)
-    public Ajax uploadFiles(@RequestParam(value = "id") String id,
+    @RequestMapping(value = "warehousing", method = RequestMethod.POST)
+    public Ajax warehousing(@RequestParam(value = "id") String id,
                             @RequestParam(value = "file") CommonsMultipartFile file,
                             @RequestParam(value = "status", defaultValue = "0") int status,
-                            @RequestParam(value = "pictures") List pictures,
+                            @RequestParam(value = "pictures") List<String> pictures,
                             @RequestParam(value = "title") String title) throws Exception {
 
         logger.info("请求内容title：{}", title);
         logger.info("请求内容：{}", pictures.size());
+        if(pictures.size()<=0) throw new Exception("请先上传图片组");
 
         //调用文件上传
         Ajax ajax = this.uploadFile(id, file, status);
 
-        logger.info("返回值：{}", ajax.toString());
+        if(ajax.getCode()!=0) throw new Exception(ajax.getErrMsg());
 
-        return ajax;
+
+        JSONObject jsonObject = JSONObject.parseObject(ajax.getData()+"");
+
+        String head_img = jsonObject.getString("accessUrl");
+
+        //用于获取新增ID
+        CategoryEntity categoryEntity = new CategoryEntity();
+
+        categoryDao.insert(head_img,title,categoryEntity);
+
+        int category_id = categoryEntity.getId();
+
+        for (String picture : pictures) {
+            picturesDao.insert(picture,category_id);
+        }
+
+        logger.info("platform/api/warehousing 接口返回");
+
+        return new Ajax("入库成功");
     }
 
 

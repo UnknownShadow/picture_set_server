@@ -35,7 +35,6 @@ public class PublicHandleUtils {
                 cosPath = json.getString("cosPath");
             }
         }
-        logger.info("cosPath值：{}", cosPath);
 
         return cosPath;
     }

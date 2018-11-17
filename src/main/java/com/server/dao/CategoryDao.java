@@ -17,4 +17,11 @@ public interface CategoryDao {
             "from category order by created_time desc limit #{offset},#{limit}")
     List<CategoryResp> getAllByPaging(@Param("offset") int offset,@Param("limit") int limit);
 
+
+    //数据新增
+    @Insert("insert into category(head_img,title,created_time)values(#{head_img},#{title},now())")
+    @Options(useGeneratedKeys = true,keyProperty = "categoryEntity.id")
+    void insert(@Param("head_img") String head_img,@Param("title") String title,
+                @Param("categoryEntity") CategoryEntity categoryEntity);
+
 }
