@@ -7,6 +7,7 @@ import com.server.dao.PicturesDao;
 import com.server.entity.CategoryEntity;
 import com.server.entity.api.Ajax;
 import com.server.service.qcloud.CosService;
+import com.server.utils.CommonUtils;
 import com.server.utils.PublicHandleUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Api(value = "美图吧管理后台接口中心", description = "美图吧管理后台接口中心")
@@ -73,19 +76,19 @@ public class PlatformController extends BaseController {
         if (cmf != null) {
 
             //获取文件的后缀名
-           /* String suffixName = file.getOriginalFilename();
+            String suffixName = file.getOriginalFilename();
             int indexOf = suffixName.lastIndexOf(".");
             if (indexOf < 0) indexOf = suffixName.length();
             suffixName = suffixName.substring(indexOf);         //需要测试
             logger.info("上传的文件后缀名为：{}", suffixName);
 
             //判断上传的文件是图片还是视频
-            type = PublicHandleUtils.getType(suffixName);
+//            type = PublicHandleUtils.getType(suffixName);
 
             //生成文件名
             String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             //避免快速点击上传造成同名，提示文件已存在错误：生成4位随机数
-            fileName = fileName + CommonUtils.getRandomStringByLength(4, 0);*/
+            fileName = fileName + CommonUtils.getRandomString(4);
 
             //加载对象存储 COS
             cosService.load();
@@ -94,7 +97,7 @@ public class PlatformController extends BaseController {
                 is = cmf.getInputStream();
 
                 //文件上传到腾讯云
-                String isUpload = cosService.uploadByIo(cosPath + file.getOriginalFilename(), is);
+                String isUpload = cosService.uploadByIo(cosPath + fileName, is);
 
                 JSONObject jsonObject = JSONObject.parseObject(isUpload);
                 int code = jsonObject.getIntValue("code");
