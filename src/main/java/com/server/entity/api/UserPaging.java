@@ -5,13 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 @Data
 @ApiModel
-public class ApiRequest implements Serializable{
+@ToString(includeFieldNames = true,callSuper = true)
+public class UserPaging extends Paging{
 
-    @ApiModelProperty("用户ID")
+    @ApiModelProperty(value = "用户ID")
     private Integer id;
 
 }

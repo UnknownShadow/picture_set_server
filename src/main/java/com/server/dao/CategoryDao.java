@@ -14,7 +14,7 @@ import java.util.List;
 public interface CategoryDao {
 
     @Select("select id,head_img headImg,title,thumbs_up thumbsUp " +
-            "from category order by created_time desc limit #{offset},#{limit}")
+            "from category where show_status != 0 order by created_time desc limit #{offset},#{limit}")
     List<CategoryResp> getAllByPaging(@Param("offset") int offset,@Param("limit") int limit);
 
 

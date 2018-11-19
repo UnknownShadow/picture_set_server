@@ -1,21 +1,18 @@
 package com.server.controller.rest;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.server.controller.BaseController;
-import com.server.dao.*;
-import com.server.entity.*;
+import com.server.dao.CategoryDao;
+import com.server.dao.PicturesDao;
+import com.server.dao.ShareDao;
+import com.server.dao.UsersDao;
+import com.server.entity.UsersEntity;
 import com.server.entity.api.*;
-import com.server.service.*;
+import com.server.service.WeChatPayService;
 import com.server.service.qcloud.CosService;
-import com.server.service.qcloud.QcloudSmsService;
-import com.server.utils.*;
+import com.server.utils.PublicUtil;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +20,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.List;
 
 
 @Api(value = "美图吧小程序接口中心", description = "美图吧小程序接口中心")
 @RestController
-@RequestMapping("store/api/")
-public class StoreController extends BaseController {
+@RequestMapping("small/api/")
+public class SmallController extends BaseController {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -41,6 +37,8 @@ public class StoreController extends BaseController {
     CategoryDao categoryDao;
     @Autowired
     PicturesDao picturesDao;
+    @Autowired
+    ShareDao shareDao;
 
     @Autowired
     CosService cosService;
@@ -75,7 +73,7 @@ public class StoreController extends BaseController {
     @RequestMapping(value = "signIn", method = RequestMethod.POST)
     public Ajax signIn(@RequestBody SignInReq signIn) throws Exception {
 
-        logger.info("客户端请求数据（store/api/signIn）：{}", signIn.toString());
+        logger.info("客户端请求数据（small/api/signIn）：{}", signIn.toString());
 
         int user_id = 0;    //用户ID
 
@@ -104,7 +102,7 @@ public class StoreController extends BaseController {
         JSONObject json = new JSONObject();
         json.put("userId", user_id);
 
-        logger.info("服务端返回数据（store/api/signIn）：{}", json);
+        logger.info("服务端返回数据（small/api/signIn）：{}", json);
         return new Ajax(json);
     }
 
@@ -116,7 +114,7 @@ public class StoreController extends BaseController {
     @RequestMapping(value = "index", method = RequestMethod.POST)
     public Ajax index(@RequestBody Paging paging) throws Exception {
 
-        logger.info("客户端请求数据（store/api/index）：{}", paging.toString());
+        logger.info("客户端请求数据（small/api/index）：{}", paging.toString());
 
         Integer page = paging.getPage();
         Integer limit = paging.getLimit();
@@ -128,7 +126,7 @@ public class StoreController extends BaseController {
         List<CategoryResp> categories = categoryDao.getAllByPaging(offset, limit);
 
 
-        logger.info("服务端返回数据（store/api/index）：{}", categories.toArray());
+        logger.info("服务端返回数据（small/api/index）：{}", categories.toArray());
         return new Ajax(categories);
     }
 
@@ -140,12 +138,45 @@ public class StoreController extends BaseController {
     @RequestMapping(value = "details", method = RequestMethod.GET)
     public Ajax details(@RequestParam(value = "id") int id) throws Exception {
 
-        logger.info("客户端请求数据（store/api/details）：{}",id);
+        logger.info("客户端请求数据（small/api/details）：{}", id);
 
         List<JSONObject> details = picturesDao.queryByCategoryID(id);
 
-        logger.info("服务端返回数据（store/api/details）：{}", details.toArray());
+        logger.info("服务端返回数据（small/api/details）：{}", details.toArray());
         return new Ajax(details);
+    }
+
+
+    @ApiOperation(value = "记录用户分享", notes = "记录用户分享",
+            httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
+            response = Ajax.class)
+    @ResponseBody
+    @RequestMapping(value = "setShare", method = RequestMethod.POST)
+    public Ajax setShare(@RequestBody SetShareReq setShareReq) throws Exception {
+
+        logger.info("客户端请求数据（small/api/setShare）：{}", setShareReq.toString());
+
+        shareDao.insert(setShareReq.getId(), setShareReq.getCategoryId(), setShareReq.getStatus());
+
+        logger.info("服务端（small/api/setShare）返回");
+        return new Ajax("记录成功");
+    }
+
+
+    @ApiOperation(value = "记录用户进入小程序的次数", notes = "记录用户进入小程序的次数",
+            httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
+            response = Ajax.class)
+    @ResponseBody
+    @RequestMapping(value = "setTimes", method = RequestMethod.POST)
+    public Ajax setTimes(@RequestBody ApiRequest apiRequest) throws Exception {
+
+        logger.info("客户端请求数据（small/api/setTimes）：{}", apiRequest.toString());
+
+        //增加小程序进入的次数
+        usersDao.updateTimesByID(apiRequest.getId());
+
+        logger.info("服务端（small/api/setTimes）返回");
+        return new Ajax("记录成功");
     }
 
 

@@ -16,7 +16,7 @@
     function uploadF(obj) {
         $.ajaxFileUpload({
             type:"post",
-            url:"store/api/uploadFile",
+            url:"small/api/uploadFile",
             secureuri:false,// 一般设置为false
             fileElementId:"upfile",// 文件上传表单的id <input type="file" id="fileUpload" name="file" />
             dataType:"multipart/form-data",

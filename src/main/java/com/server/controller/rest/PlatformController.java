@@ -58,7 +58,7 @@ public class PlatformController extends BaseController {
                            @RequestParam(value = "file") CommonsMultipartFile file,
                            @RequestParam(value = "status", defaultValue = "0") int status) throws Exception {
 
-        logger.info("客户端请求数据（store/api/uploadFile）：上传商品的对应ID：{}；" +
+        logger.info("客户端请求数据（platform/api/uploadFile）：上传商品的对应ID：{}；" +
                 "上传文件的状态码：{}；上传的资源文件：{}", id, status, file.getOriginalFilename());
 
 
@@ -129,7 +129,7 @@ public class PlatformController extends BaseController {
         //参数封装
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("accessUrl", access_url);
-        logger.info("服务端返回数据（store/api/uploadFile）：{}", jsonObject.toJSONString());
+        logger.info("服务端返回数据（platform/api/uploadFile）：{}", jsonObject.toJSONString());
         return new Ajax(jsonObject);
     }
 
