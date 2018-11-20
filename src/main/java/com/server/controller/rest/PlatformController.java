@@ -97,7 +97,7 @@ public class PlatformController extends BaseController {
                 is = cmf.getInputStream();
 
                 //文件上传到腾讯云
-                String isUpload = cosService.uploadByIo(cosPath + fileName, is);
+                String isUpload = cosService.uploadByIo(cosPath + fileName + suffixName, is);
 
                 JSONObject jsonObject = JSONObject.parseObject(isUpload);
                 int code = jsonObject.getIntValue("code");
@@ -137,9 +137,9 @@ public class PlatformController extends BaseController {
     /**
      * 图片新增
      *
-     * @param id     商品ID
-     * @param file   上传的首页显示图片文件
-     * @param status 用于区分文件上传到哪个cosPath
+     * @param id       商品ID
+     * @param file     上传的首页显示图片文件
+     * @param status   用于区分文件上传到哪个cosPath
      * @param pictures 图片集合
      */
     @ApiOperation(value = "图片集合入库", notes = "图片集合入库",
@@ -155,27 +155,27 @@ public class PlatformController extends BaseController {
 
         logger.info("请求内容title：{}", title);
         logger.info("请求内容：{}", pictures.size());
-        if(pictures.size()<=0) throw new Exception("请先上传图片组");
+        if (pictures.size() <= 0) throw new Exception("请先上传图片组");
 
         //调用文件上传
         Ajax ajax = this.uploadFile(id, file, status);
 
-        if(ajax.getCode()!=0) throw new Exception(ajax.getErrMsg());
+        if (ajax.getCode() != 0) throw new Exception(ajax.getErrMsg());
 
 
-        JSONObject jsonObject = JSONObject.parseObject(ajax.getData()+"");
+        JSONObject jsonObject = JSONObject.parseObject(ajax.getData() + "");
 
         String head_img = jsonObject.getString("accessUrl");
 
         //用于获取新增ID
         CategoryEntity categoryEntity = new CategoryEntity();
 
-        categoryDao.insert(head_img,title,categoryEntity);
+        categoryDao.insert(head_img, title, categoryEntity);
 
         int category_id = categoryEntity.getId();
 
         for (String picture : pictures) {
-            picturesDao.insert(picture,category_id);
+            picturesDao.insert(picture, category_id);
         }
 
         logger.info("platform/api/warehousing 接口返回");

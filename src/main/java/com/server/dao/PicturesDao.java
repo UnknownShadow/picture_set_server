@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface PicturesDao {
 
-    @Select("select img from pictures where category_id = #{category_id}")
+    @Select("select id,img from pictures where category_id = #{category_id}")
     List<JSONObject> queryByCategoryID(@Param("category_id") int category_id);
 
     //数据入库

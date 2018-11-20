@@ -2,10 +2,7 @@ package com.server.controller.rest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.server.controller.BaseController;
-import com.server.dao.CategoryDao;
-import com.server.dao.PicturesDao;
-import com.server.dao.ShareDao;
-import com.server.dao.UsersDao;
+import com.server.dao.*;
 import com.server.entity.UsersEntity;
 import com.server.entity.api.*;
 import com.server.service.WeChatPayService;
@@ -39,6 +36,8 @@ public class SmallController extends BaseController {
     PicturesDao picturesDao;
     @Autowired
     ShareDao shareDao;
+    @Autowired
+    PreviewRecordDao previewRecordDao;
 
     @Autowired
     CosService cosService;
@@ -179,6 +178,22 @@ public class SmallController extends BaseController {
         return new Ajax("记录成功");
     }
 
+
+    @ApiOperation(value = "记录用户的图片", notes = "记录用户的图片",
+            httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
+            response = Ajax.class)
+    @ResponseBody
+    @RequestMapping(value = "setPreview", method = RequestMethod.POST)
+    public Ajax setPreview(@RequestBody SetPreviewReq setPreviewReq) throws Exception {
+
+        logger.info("客户端请求数据（small/api/setPreview）：{}", setPreviewReq.toString());
+
+        //增加小程序进入的次数
+        previewRecordDao.insert(setPreviewReq.getId(),setPreviewReq.getPicturesId());
+
+        logger.info("服务端（small/api/setPreview）返回");
+        return new Ajax("记录成功");
+    }
 
 }
 
