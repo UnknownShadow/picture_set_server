@@ -58,11 +58,7 @@ public class SmallController extends BaseController {
     private String apiKey;
     @Value("${small.notifyUrl}")
     private String notifyUrl;
-    @Value("${small.unifiedOrder}")
-    private String unifiedOrder;
 
-    @Value("${server.token}")
-    private String serverToken;
 
 
     @ApiOperation(value = "小程序登录", notes = "小程序登录",
