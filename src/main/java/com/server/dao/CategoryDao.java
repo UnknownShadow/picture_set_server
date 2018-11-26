@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface CategoryDao {
 
-    @Select("select id,head_img headImg,title,thumbs_up thumbsUp " +
+    @Select("select id,head_img headImg,title,pv thumbsUp " +
             "from category where show_status != 0 order by created_time desc limit #{offset},#{limit}")
     List<CategoryResp> getAllByPaging(@Param("offset") int offset,@Param("limit") int limit);
 
@@ -23,5 +23,10 @@ public interface CategoryDao {
     @Options(useGeneratedKeys = true,keyProperty = "categoryEntity.id")
     void insert(@Param("head_img") String head_img,@Param("title") String title,
                 @Param("categoryEntity") CategoryEntity categoryEntity);
+
+    //增加访问量
+    @Update("update category set pv=pv+1 where id = #{id}")
+    void updatePvByID(@Param("id") int id);
+
 
 }

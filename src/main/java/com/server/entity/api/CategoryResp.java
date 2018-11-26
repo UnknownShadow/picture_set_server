@@ -15,6 +15,6 @@ public class CategoryResp {
     @ApiModelProperty(value = "标题")
     private String title;
     @ApiModelProperty(value = "总点赞数")
-    private String thumbsUp;
+    private int thumbsUp;
 
 }

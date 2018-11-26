@@ -140,6 +140,9 @@ public class SmallController extends BaseController {
 
         logger.info("客户端请求数据（small/api/details）：{}", id);
 
+        //增加访问量
+        categoryDao.updatePvByID(id);
+
         List<JSONObject> details = picturesDao.queryByCategoryID(id);
 
         logger.info("服务端返回数据（small/api/details）：{}", details.toArray());
