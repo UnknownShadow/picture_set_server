@@ -17,7 +17,4 @@ public abstract class BaseService {
     @Value("${cos.region}")
     protected String cosRegion;
 
-
-    @Value("${server.url}")
-    protected String server;
 }
