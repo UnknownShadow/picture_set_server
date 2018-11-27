@@ -50,4 +50,13 @@ public interface UsersDao {
     void updateTimesByID(@Param("id") int id);
 
 
+    //当日新增人数
+    @Select("select count(id) from users where created_time between #{start_time} and #{end_time}")
+    int countByToday(@Param("start_time")String start_time,@Param("end_time")String end_time);
+
+
+    //总人数
+    @Select("select count(id) from users")
+    int countAllUser();
+
 }

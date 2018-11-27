@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.server.controller.BaseController;
 import com.server.dao.CategoryDao;
 import com.server.dao.PicturesDao;
+import com.server.dao.UsersDao;
 import com.server.entity.CategoryEntity;
 import com.server.entity.api.Ajax;
 import com.server.entity.api.WarehousingReq;
@@ -36,6 +37,8 @@ public class PlatformController extends BaseController {
     CategoryDao categoryDao;
     @Autowired
     PicturesDao picturesDao;
+    @Autowired
+    UsersDao usersDao;
 
 
     //腾讯云cos所需参数
@@ -137,7 +140,6 @@ public class PlatformController extends BaseController {
 
     /**
      * 图片新增
-     *
      */
     @ApiOperation(value = "图片集合入库", notes = "图片集合入库",
             httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
@@ -259,4 +261,32 @@ public class PlatformController extends BaseController {
         return new Ajax(jsonObject);
     }
 
+
+    @ApiOperation(value = "当日数据统计", notes = "当日数据统计",
+            httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE,
+            response = Ajax.class)
+    @ResponseBody
+    @RequestMapping(value = "statistics", method = RequestMethod.POST)
+    public Ajax uploader() throws Exception {
+
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        //当日新增人数
+        int userCount = usersDao.countByToday(date + " 00:00:00", date + " 23:59:59");
+
+        //总人数
+        int allUserCount = usersDao.countAllUser();
+
+        //参数封装
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userCount", userCount);
+        jsonObject.put("allUserCount", allUserCount);
+
+        logger.info("服务端返回数据（platform/api/statistics）：{}", jsonObject.toJSONString());
+        return new Ajax(jsonObject);
+    }
+
+
+
+    
 }
