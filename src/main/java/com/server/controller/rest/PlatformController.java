@@ -101,7 +101,7 @@ public class PlatformController extends BaseController {
                 is = cmf.getInputStream();
 
                 //文件上传到腾讯云
-                String isUpload = cosService.uploadByIo(cosPath + fileName, is);
+                String isUpload = cosService.uploadByIo(cosPath + fileName + suffixName, is);
 
                 JSONObject jsonObject = JSONObject.parseObject(isUpload);
                 int code = jsonObject.getIntValue("code");
@@ -225,7 +225,7 @@ public class PlatformController extends BaseController {
                 is = cmf.getInputStream();
 
                 //文件上传到腾讯云
-                String isUpload = cosService.uploadByIo(cosPath + fileName, is);
+                String isUpload = cosService.uploadByIo(cosPath + fileName + suffixName, is);
 
                 JSONObject jsonObject = JSONObject.parseObject(isUpload);
                 int code = jsonObject.getIntValue("code");
@@ -287,6 +287,4 @@ public class PlatformController extends BaseController {
     }
 
 
-
-    
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface CategoryDao {
 
-    @Select("select id,head_img headImg,title,pv thumbsUp " +
+    @Select("select id,head_img headImg,title,pv thumbsUp,date_format(created_time,'%Y-%m-%d %H:%i') date " +
             "from category where show_status != 0 order by created_time desc limit #{offset},#{limit}")
     List<CategoryResp> getAllByPaging(@Param("offset") int offset,@Param("limit") int limit);
 
